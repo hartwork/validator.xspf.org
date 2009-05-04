@@ -521,7 +521,7 @@ else:
 #############################################################################################
 
 
-errorTable = ""
+errorTable = []
 
 
 def nsXspf(localName):
@@ -533,40 +533,40 @@ def nsXml(localName):
 
 
 def startErrorTable():
-    if globals()["errorTable"] == "":
-        globals()["errorTable"] += """
+    if not globals()["errorTable"]:
+        globals()["errorTable"].append("""
 											<h3>Error protocol:</h3>
 											<table cellspacing="0">
 											<tr><td class="number">Line</td><td class="number">Col</td><td class="vert">&nbsp;</td><td class="error">Error</td></tr>
-											<tr height="1"><td class="horz">&nbsp;</td><td class="horz">&nbsp;</td><td class="horz">&nbsp;</td><td class="horz">&nbsp;</td></tr>"""
+											<tr height="1"><td class="horz">&nbsp;</td><td class="horz">&nbsp;</td><td class="horz">&nbsp;</td><td class="horz">&nbsp;</td></tr>""")
 
 
 # line is one-based
 def addError(line, col, escapedError):
-    globals()["errorTable"] += "<tr><td class=\"number\"><a href=\"#bad_" + str(line) + "\" class=\"number\">" + str(line) + "</a></td><td class=\"number\">" + str(col) + "</td><td class=\"vert\">&nbsp;</td><td class=\"error\">" + escapedError + "</td></tr>"
+    globals()["errorTable"].append("<tr><td class=\"number\"><a href=\"#bad_" + str(line) + "\" class=\"number\">" + str(line) + "</a></td><td class=\"number\">" + str(col) + "</td><td class=\"vert\">&nbsp;</td><td class=\"error\">" + escapedError + "</td></tr>")
 
 
 def stopErrorTable():
-    if globals()["errorTable"] != "":
-        globals()["errorTable"] += """
+    if globals()["errorTable"]:
+        globals()["errorTable"].append("""
 											</table>
 											<br>
-											<br>"""
+											<br>""")
 
     else:
-        globals()["errorTable"] += """
-											<br>"""
+        globals()["errorTable"].append("""
+											<br>""")
 
 
-sourceTable = ""
+sourceTable = []
 lastLine = -1
 
 
 def startSourceTable():
-    if globals()["sourceTable"] == "":
-        globals()["sourceTable"] = """
+    if not globals()["sourceTable"]:
+        globals()["sourceTable"].append("""
 											<h3>Processed input:</h3>
-											<table cellspacing="0">"""
+											<table cellspacing="0">""")
 
 
 def stopSourceTable():
@@ -577,27 +577,27 @@ def stopSourceTable():
     ALL = len(globals()["lineHeads"])
     if LAST < ALL - 1:
         moreSourceLinesIncluding(ALL - 1, False)
-    globals()["sourceTable"] += """
+    globals()["sourceTable"].append("""
 											</table>
 											<br>
-											<br>"""
+											<br>""")
 
 
 # lineNumber is zero-based
 def addSourceLine(lineNumber, badFlag):
-    globals()["sourceTable"] += """
+    globals()["sourceTable"].append("""
 											<tr>
 												<td class="lineNumber">""" + str(lineNumber + 1) + """</td>
-												<td class="lineVert">&nbsp;</td>"""
+												<td class="lineVert">&nbsp;</td>""")
     if badFlag:
-        globals()["sourceTable"] += """
-												<td class="lineBad"><a name=\"bad_""" + str(lineNumber + 1) + """\" class=\"anchor\">"""
+        globals()["sourceTable"].append("""
+												<td class="lineBad"><a name=\"bad_""" + str(lineNumber + 1) + """\" class=\"anchor\">""")
     elif lineNumber % 2:
-        globals()["sourceTable"] += """
-												<td class="lineEven">"""
+        globals()["sourceTable"].append("""
+												<td class="lineEven">""")
     else:
-        globals()["sourceTable"] += """
-												<td class="lineOdd">"""
+        globals()["sourceTable"].append("""
+												<td class="lineOdd">""")
 
     # Last line or normal?
     if lineNumber == len(globals()["lineHeads"]) - 1:
@@ -609,11 +609,11 @@ def addSourceLine(lineNumber, badFlag):
     line2 = line[0:MAX_CHARS_PER_LINE]
     for i in range(MAX_CHARS_PER_LINE, len(line), MAX_CHARS_PER_LINE):
         line2 += "\n" + line[i:i + MAX_CHARS_PER_LINE]
-    globals()["sourceTable"] += cgi.escape(line2).replace("\t", "&nbsp;&nbsp;").replace(" ", "&nbsp;").replace("\n", "<br>")
+    globals()["sourceTable"].append(cgi.escape(line2).replace("\t", "&nbsp;&nbsp;").replace(" ", "&nbsp;").replace("\n", "<br>"))
     if badFlag:
-        globals()["sourceTable"] += """</a>"""
-    globals()["sourceTable"] += """</td>
-											</tr>"""
+        globals()["sourceTable"].append("""</a>""")
+    globals()["sourceTable"].append("""</td>
+											</tr>""")
 
 
 # lineNumber is zero-based
@@ -1350,10 +1350,10 @@ if input != "":
 
 
     stopErrorTable()
-    print errorTable
+    print "".join(errorTable)
 
     stopSourceTable()
-    print sourceTable
+    print "".join(sourceTable)
 
 
     print """	
