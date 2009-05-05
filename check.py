@@ -1384,7 +1384,7 @@ print """
 							<td align="center" style="font-size:9pt; padding-top:2px; padding-bottom:5px;">
 								<a href="http://git.xiph.org/?p=validator-xspf-org.git;a=summary">Source Code</a>&nbsp;&nbsp;&nbsp;
 								<a href="https://trac.xiph.org/browser/trunk/xspf/testcase">Test Cases</a>&nbsp;&nbsp;&nbsp;
-								<a href="http://libspiff.sourceforge.net/">libSpiff</a>&nbsp;&nbsp;&nbsp;
+								<a href="http://libspiff.sourceforge.net/">libxspf</a>&nbsp;&nbsp;&nbsp;
 								<a href="http://xspf.org/xspf-v1.html">XSPF Spec</a>&nbsp;&nbsp;&nbsp;
 							</td>
 						</tr>
