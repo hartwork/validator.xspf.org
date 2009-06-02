@@ -638,6 +638,11 @@ def fail(text):
     moreSourceLinesIncluding(checker.CurrentLineNumber - 1, True)
 
 
+def checkXmlBase(xmlBase):
+    if not isUri(xmlBase):
+        fail("Attribute <i>xml:base</i> is not a URI.")
+
+
 def handlePlaylistAttribs(atts):
     versionFound = False
     keys = atts.keys()
@@ -655,8 +660,7 @@ def handlePlaylistAttribs(atts):
             versionFound = True
         elif name == nsXml("base"):
             xmlBase = atts.values()[i]
-            if not isUri(xmlBase):
-                fail("Attribute <i>xml:base</i> is not a URI.")
+            checkXmlBase(xmlBase)
         else:
             fail("Attribute '" + cgi.escape(name) + "' not allowed.")
 
@@ -670,8 +674,7 @@ def handleNoAttribsExceptXmlBase(atts):
         name = keys[i]
         if name == nsXml("base"):
             xmlBase = atts.values()[i]
-            if not isUri(xmlBase):
-                fail("Attribute <i>xml:base</i> is not a URI.")
+            checkXmlBase(xmlBase)
         else:
             fail("Attribute '" + cgi.escape(keys[i]) + "' not allowed.")
 
@@ -687,8 +690,7 @@ def handleExtensionAttribs(atts):
             applicationFound = True
         elif name == nsXml("base"):
             xmlBase = atts.values()[i]
-            if not isUri(xmlBase):
-                fail("Attribute <i>xml:base</i> is not a URI.")
+            checkXmlBase(xmlBase)
         else:
             fail("Attribute '" + cgi.escape(name) + "' not allowed.")
     if not applicationFound:
@@ -706,8 +708,7 @@ def handleMetaLinkAttribs(atts):
             relFound = True
         elif name == nsXml("base"):
             xmlBase = atts.values()[i]
-            if not isUri(xmlBase):
-                fail("Attribute <i>xml:base</i> is not a URI.")
+            checkXmlBase(xmlBase)
         else:
             fail("Attribute '" + cgi.escape(name) + "' not allowed.")
     if not relFound:
