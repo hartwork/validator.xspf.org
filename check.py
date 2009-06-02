@@ -30,6 +30,10 @@
 # -----------------------------------------------------------------------
 # HISTORY
 # -----------------------------------------------------------------------
+# 2009-06-02 -- Sebastian Pipping <sebastian@pipping.org>
+#
+#   * Fixed: Quick fix allowing attribute xml:id to appear anywhere
+#
 # 2008-09-19 -- Elias Pipping <elias@pipping.org>,
 #               Sebastian Pipping <webmaster@hartwork.org>
 #
@@ -661,6 +665,8 @@ def handlePlaylistAttribs(atts):
         elif name == nsXml("base"):
             xmlBase = atts.values()[i]
             checkXmlBase(xmlBase)
+        elif name == nsXml("id"):
+            pass
         else:
             fail("Attribute '" + cgi.escape(name) + "' not allowed.")
 
@@ -675,6 +681,8 @@ def handleNoAttribsExceptXmlBase(atts):
         if name == nsXml("base"):
             xmlBase = atts.values()[i]
             checkXmlBase(xmlBase)
+        elif name == nsXml("id"):
+            pass
         else:
             fail("Attribute '" + cgi.escape(keys[i]) + "' not allowed.")
 
@@ -691,6 +699,8 @@ def handleExtensionAttribs(atts):
         elif name == nsXml("base"):
             xmlBase = atts.values()[i]
             checkXmlBase(xmlBase)
+        elif name == nsXml("id"):
+            pass
         else:
             fail("Attribute '" + cgi.escape(name) + "' not allowed.")
     if not applicationFound:
@@ -709,6 +719,8 @@ def handleMetaLinkAttribs(atts):
         elif name == nsXml("base"):
             xmlBase = atts.values()[i]
             checkXmlBase(xmlBase)
+        elif name == nsXml("id"):
+            pass
         else:
             fail("Attribute '" + cgi.escape(name) + "' not allowed.")
     if not relFound:
