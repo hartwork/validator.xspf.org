@@ -163,6 +163,10 @@ def isSafeDownloadTarget(candidate):
     return u.scheme.lower() in allowedSchemes
 
 
+class MaliciousXmlException(Exception):
+    pass
+
+
 print """
 <html lang="en" dir="ltr">
 	<head>
@@ -1251,7 +1255,7 @@ def handleEntityDeclaration(entityName, is_parameter_entity, value, base, system
     else:
         keepParsing = True
     if not keepParsing:
-        raise Exception("MALICIOUS")
+        raise MaliciousXmlException()
 
     # Save to map
     entityNameToValueLen[entityName] = {
@@ -1309,7 +1313,7 @@ if input != "":
     except xml.parsers.expat.ExpatError:
         reason = "Invalid XML"
         fatal = True
-    except Exception:
+    except MaliciousXmlException:
         reason = "<b style=\"color:red;\">Input considered malicious. Please do <em>not</em> attack this site. Thanks.</b>"
         fatal = True
 
