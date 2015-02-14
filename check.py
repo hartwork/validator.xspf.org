@@ -24,8 +24,6 @@
 # REQUIREMENTS
 # -----------------------------------------------------------------------
 # * Python 2.4 or later (for current line attribute of Expat parser)
-# * Ft.Lib.Uri of 4Suite (http://4suite.org/)
-#   (package python-4suite-xml in Debian testing/unstable)
 #
 # -----------------------------------------------------------------------
 # HISTORY
@@ -146,17 +144,7 @@ import urllib2
 import sys
 import xml.parsers.expat
 import re
-
-try:
-    from Ft.Lib import Uri
-except ImportError:
-    print """\
-ERROR: Package 'Ft.Lib' is missing.
-
-On Debian run: sudo apt-get install python-4suite-xml
-On Gentoo run: emerge -av dev-python/4suite
-"""
-    sys.exit(2)
+from urlparse import urlparse
 
 print "Content-Type: text/html"     # HTML is following
 print                               # blank line, end of headers
@@ -168,12 +156,11 @@ print                               # blank line, end of headers
 
 
 def isSafeDownloadTarget(candidate):
-    schemeOrNone = Uri.GetScheme(candidate)
-    if schemeOrNone == None:
+    u = urlparse(candidate)
+    if not u.scheme:
         return False
-    scheme = schemeOrNone.lower()
     allowedSchemes = set(["http", "https"])
-    return scheme in allowedSchemes
+    return u.scheme.lower() in allowedSchemes
 
 
 print """
@@ -1275,7 +1262,9 @@ def handleEntityDeclaration(entityName, is_parameter_entity, value, base, system
 
 
 def isUri(text):
-    return Uri.MatchesUriRefSyntax(text)
+    # TODO proper checking
+    return text is not None \
+            and str(text) == text
 
 
 def isDateTime(text):
