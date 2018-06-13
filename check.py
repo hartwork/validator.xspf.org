@@ -31,6 +31,7 @@
 # 2018-06-13 -- Sebastian Pipping <sebastian@pipping.org>
 #
 #   * Removed: Link to Flattr page
+#   * Changed: Link to Git repository
 #
 # 2010-05-29 -- Sebastian Pipping <sebastian@pipping.org>
 #
@@ -1401,7 +1402,7 @@ print """
 						</tr>
 						<tr>
 							<td align="center" style="font-size:9pt; padding-top:2px; padding-bottom:5px;">
-								<a href="http://git.xiph.org/?p=validator-xspf-org.git;a=summary">Source Code</a>&nbsp;&nbsp;&nbsp;
+								<a href="https://github.com/hartwork/validator.xspf.org">Source Code</a>&nbsp;&nbsp;&nbsp;
 								<a href="https://trac.xiph.org/browser/trunk/xspf/testcase">Test Cases</a>&nbsp;&nbsp;&nbsp;
 								<a href="http://libspiff.sourceforge.net/">libxspf</a>&nbsp;&nbsp;&nbsp;
 								<a href="http://xspf.org/xspf-v1.html">XSPF Spec</a>&nbsp;&nbsp;&nbsp;
