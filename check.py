@@ -28,6 +28,10 @@
 # -----------------------------------------------------------------------
 # HISTORY
 # -----------------------------------------------------------------------
+# 2018-06-13 -- Sebastian Pipping <sebastian@pipping.org>
+#
+#   * Removed: Link to Flattr page
+#
 # 2010-05-29 -- Sebastian Pipping <sebastian@pipping.org>
 #
 #   * Added: Link to Flattr page
@@ -371,26 +375,13 @@ else:
 					<table cellpadding="0" cellspacing="0" width="750" style="border:1px solid rgb(180,180,180); background-color:#FFF;">"""
 
 print """
-						<tr>
-							<td align="right" style="padding-top: 5px; padding-right: 5px;">
-								<script type="text/javascript">
-									var flattr_url = 'http://validator.xspf.org/';
-									var flattr_btn='compact';
-								</script>
-								<script src="http://api.flattr.com/button/load.js" type="text/javascript"></script>
-								<noscript>
-									<a href="http://flattr.com/thing/8826/Online-XSPF-validator" target="_blank">
-									<img src="http://api.flattr.com/button/button-compact-static-100x17.png" title="Flattr this" border="0" /></a>
-								</noscript>
-							</td>
-						</tr>
 						<tr>"""
 
 
 if input == "":
     # Formular centered
     print """
-							<td align="center" style="padding-top:38px; padding-bottom:60px">
+							<td align="center" style="padding-top:60px; padding-bottom:60px">
 								<form action="" accept-charset="UTF-8" enctype="multipart/form-data" method="post">
 								<!-- CONTENT -->
 								<table>"""
@@ -398,7 +389,7 @@ if input == "":
 else:
     # Results full width
     print """
-							<td style="padding-top:38px; padding-bottom:50px;">
+							<td style="padding-top:60px; padding-bottom:50px;">
 								<!-- CONTENT -->
 								<table style="width:100%;">"""
 
