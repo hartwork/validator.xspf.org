@@ -9,7 +9,7 @@ RUN apt-get update && apt-get --yes dist-upgrade
 
 # Install dependencies
 RUN apt-get update && apt-get install --no-install-recommends --yes -V \
-        lighttpd python2.7
+        lighttpd python2.7 ca-certificates
 
 # Install app
 COPY check.py xspflogo-1.5.gif  /var/www/html/
