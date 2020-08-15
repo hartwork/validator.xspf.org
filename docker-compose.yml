@@ -8,7 +8,7 @@ networks:
     external: yes
 
 services:
-  validator-xpsf-org:
+  validator-xspf-org:
     build: ./
     ports:
       - 127.0.0.1:52080:80
