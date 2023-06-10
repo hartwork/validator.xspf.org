@@ -2,7 +2,7 @@
 # Licensed under GNU Affero GPL v3 or later
 
 # Base image
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Start off with the most updated image possible
 RUN apt-get update && apt-get --yes dist-upgrade
