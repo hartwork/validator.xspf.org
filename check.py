@@ -144,15 +144,16 @@
 # ------------------------------------------------------------------------------
 
 import cgi
+import html
 ############## import cgitb; cgitb.enable()
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import sys
 import xml.parsers.expat
 import re
-from urlparse import urlparse
+from urllib.parse import urlparse
 
-print "Content-Type: text/html"     # HTML is following
-print                               # blank line, end of headers
+print("Content-Type: text/html")     # HTML is following
+print()                              # blank line, end of headers
 
 
 # Get the basename of this script
@@ -172,7 +173,7 @@ class MaliciousXmlException(Exception):
     pass
 
 
-print """
+print("""
 <html lang="en" dir="ltr">
 	<head>
 		<title>XSPF Validator &mdash; Validate your playlists</title>
@@ -190,7 +191,7 @@ print """
 				color:rgb(130,130,130);
 				text-decoration:none;
 			}
-			
+
 			td.vert {
 				background-color:rgb(180,180,180);
 				font-size:1pt;
@@ -271,7 +272,7 @@ print """
 				padding-left:4px;
 				padding-right:8px;
 			}
-			
+
 			a.blackLink {
 				color:#000000;
 				text-decoration:none;
@@ -287,7 +288,7 @@ print """
 		<table height="100%" style="width:100%">
 			<tr>
 				<td align="center" valign="middle" style="padding:10px">
-					<!-- BORDER -->"""
+					<!-- BORDER -->""")
 
 
 valid = False
@@ -312,37 +313,37 @@ if (len(sys.argv) == 3) and (sys.argv[1] == "--shell"):
 
 else:
     form = cgi.FieldStorage()
-    if form.has_key("pasted") and form.has_key("submitPasted"):
+    if "pasted" in form and "submitPasted" in form:
         input = form.getlist("pasted")[0]
         if input != "":
             intro = "Validating pasted text<br><br>"
 
-    elif form.has_key("uploaded") and form.has_key("submitUploaded"):
+    elif "uploaded" in form and "submitUploaded" in form:
         uploaded = form["uploaded"]
         if uploaded.file:
             try:
-                input = uploaded.file.read()
+                input = uploaded.file.read().decode('UTF-8')
             except IOError:
                 pass
             finally:
                 uploaded.file.close()
 
         if input != "":
-            intro = "Validating uploaded file<br><b><i>" + cgi.escape(uploaded.filename) + "</i></b><br><br>"
+            intro = "Validating uploaded file<br><b><i>" + html.escape(uploaded.filename) + "</i></b><br><br>"
 
-    elif form.has_key("url"): ### and form.has_key("submitUrl")
+    elif "url" in form: ### and form.has_key("submitUrl")
         url = form.getlist("url")[0]
 
         if not isSafeDownloadTarget(url):
             intro = """<b style="color:red;">Download location not considered safe.<br>Please do <em>not</em> attack this site. Thanks.</b><br><br>"""
         else:
             try:
-                file = urllib2.urlopen(url)
+                file = urllib.request.urlopen(url)
                 try:
-                    input = file.read()
+                    input = file.read().decode('UTF-8')
                 finally:
                     file.close()
-                
+
             except ValueError:
                 intro = """<b style="color:red;">Invalid URL.</b><br><br>"""
 
@@ -351,8 +352,8 @@ else:
                 intro = """<b style="color:red">Could not download from URL.</b><br><br>"""
 
             if input != "":
-                intro = "Validating data from URL<br><b><i><a href=\"" + cgi.escape(url, True) \
-                        + "\" class=\"blackLink\">" + cgi.escape(url) + "</a></i></b><br><br>"
+                intro = "Validating data from URL<br><b><i><a href=\"" + html.escape(url, True) \
+                        + "\" class=\"blackLink\">" + html.escape(url) + "</a></i></b><br><br>"
 
 
 lineHeads = [0]
@@ -368,50 +369,50 @@ if input != "":
 
 if input == "":
     # Formular 600
-    print """
-					<table cellpadding="0" cellspacing="0" width="600" style="border:1px solid rgb(180,180,180); background-color:#FFF;">"""
+    print("""
+					<table cellpadding="0" cellspacing="0" width="600" style="border:1px solid rgb(180,180,180); background-color:#FFF;">""")
 else:
     # Results 800
-    print """
-					<table cellpadding="0" cellspacing="0" width="750" style="border:1px solid rgb(180,180,180); background-color:#FFF;">"""
+    print("""
+					<table cellpadding="0" cellspacing="0" width="750" style="border:1px solid rgb(180,180,180); background-color:#FFF;">""")
 
-print """
-						<tr>"""
+print("""
+						<tr>""")
 
 
 if input == "":
     # Formular centered
-    print """
+    print("""
 							<td align="center" style="padding-top:60px; padding-bottom:60px">
 								<form action="" accept-charset="UTF-8" enctype="multipart/form-data" method="post">
 								<!-- CONTENT -->
-								<table>"""
+								<table>""")
 
 else:
     # Results full width
-    print """
+    print("""
 							<td style="padding-top:60px; padding-bottom:50px;">
 								<!-- CONTENT -->
-								<table style="width:100%;">"""
+								<table style="width:100%;">""")
 
 
-print """
+print("""
 									<tr>
 										<td style="padding-bottom: 20px;" align="center"><img src="xspflogo-1.5.gif" style="width:297px; height:83px; border:0;" alt=""></td>
-									</tr>"""
+									</tr>""")
 
 
 if input == "":
     if intro != "":
-        print """
+        print("""
 									<tr>
-										<td style="width:100%;" align="center">"""
-        print intro
-        print """
-									</tr>"""
+										<td style="width:100%;" align="center">""")
+        print(intro)
+        print("""
+									</tr>""")
 
     # Formular
-    print """
+    print("""
 									<tr>
 										<td style="padding-bottom:16px;">
 											Validate a Spiff playlist from ...
@@ -449,13 +450,13 @@ if input == "":
 										<td>
 											<input name="submitPasted" value="Submit" type="submit">
 										</td>
-									</tr>"""
+									</tr>""")
 
 else:
-    print """
+    print("""
 									<tr>
-										<td style="padding-left:60px; padding-right:60px">"""
-    print intro
+										<td style="padding-left:60px; padding-right:60px">""")
+    print(intro)
 
     stack = []
     valid = True
@@ -618,7 +619,7 @@ def addSourceLine(lineNumber, badFlag):
     line2 = line[0:MAX_CHARS_PER_LINE]
     for i in range(MAX_CHARS_PER_LINE, len(line), MAX_CHARS_PER_LINE):
         line2 += "\n" + line[i:i + MAX_CHARS_PER_LINE]
-    globals()["sourceTable"].append(cgi.escape(line2).replace("\t", "&nbsp;&nbsp;").replace(" ", "&nbsp;").replace("\n", "<br>"))
+    globals()["sourceTable"].append(html.escape(line2).replace("\t", "&nbsp;&nbsp;").replace(" ", "&nbsp;").replace("\n", "<br>"))
     if badFlag:
         globals()["sourceTable"].append("""</a>""")
     globals()["sourceTable"].append("""</td>
@@ -654,60 +655,60 @@ def checkXmlBase(xmlBase):
 
 def handlePlaylistAttribs(atts):
     versionFound = False
-    keys = atts.keys()
+    keys = list(atts.keys())
     for i in range(len(atts)):
         name = keys[i]
         if name == "version":
-            dummyVersion = atts.values()[i]
+            dummyVersion = list(atts.values())[i]
             if dummyVersion == "0":
                 globals()["version"] = 0
             elif dummyVersion == "1":
                 globals()["version"] = 1
             else:
-                fail("Version must be <i>0</i> or <i>1</i>, not '" + cgi.escape(dummyVersion) + "'.")
+                fail("Version must be <i>0</i> or <i>1</i>, not '" + html.escape(dummyVersion) + "'.")
                 globals()["version"] = 1
             versionFound = True
         elif name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(name) + "' not allowed.")
+            fail("Attribute '" + html.escape(name) + "' not allowed.")
 
     if not versionFound:
         fail("Attribute <i>version</i> missing.")
 
 
 def handleNoAttribsExceptXmlBase(atts):
-    keys = atts.keys()
+    keys = list(atts.keys())
     for i in range(len(atts)):
         name = keys[i]
         if name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(keys[i]) + "' not allowed.")
+            fail("Attribute '" + html.escape(keys[i]) + "' not allowed.")
 
 
 def handleExtensionAttribs(atts):
     size = len(atts)
     applicationFound = False
     for i in range(size):
-        name = atts.keys()[i]
+        name = list(atts.keys())[i]
         if name == "application":
-            if not isUri(atts.values()[i]):
+            if not isUri(list(atts.values())[i]):
                 fail("Attribute <i>application</i> is not a URI.")
             applicationFound = True
         elif name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(name) + "' not allowed.")
+            fail("Attribute '" + html.escape(name) + "' not allowed.")
     if not applicationFound:
         fail("Attribute <i>application</i> missing.")
 
@@ -716,26 +717,26 @@ def handleMetaLinkAttribs(atts):
     size = len(atts)
     relFound = False
     for i in range(size):
-        name = atts.keys()[i]
+        name = list(atts.keys())[i]
         if name == "rel":
-            if not isUri(atts.values()[i]):
+            if not isUri(list(atts.values())[i]):
                 fail("Attribute <i>rel</i> is not a URI.")
             relFound = True
         elif name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(name) + "' not allowed.")
+            fail("Attribute '" + html.escape(name) + "' not allowed.")
     if not relFound:
         fail("Attribute <i>rel</i> missing.")
 
 
 def handleStartOne(name, atts):
     if name != nsXspf("playlist"):
-        # fail("Element '" + cgi.escape(name) + "' not allowed.")
-        fail("Root element must be <i>playlist</i>, not '" + cgi.escape(name) + "'.")
+        # fail("Element '" + html.escape(name) + "' not allowed.")
+        fail("Root element must be <i>playlist</i>, not '" + html.escape(name) + "'.")
     else:
         handlePlaylistAttribs(atts)
     globals()["stack"].append(TAG_PLAYLIST)
@@ -776,7 +777,7 @@ def handleStartTwo(name, atts):
 
     elif name == nsXspf("extension"):
         if globals()["version"] == 0:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed in XSPF-0.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed in XSPF-0.")
         else:
             handleExtensionAttribs(atts)
         globals()["stack"].append(TAG_PLAYLIST_EXTENSION)
@@ -849,7 +850,7 @@ def handleStartTwo(name, atts):
         globals()["stack"].append(TAG_PLAYLIST_TRACKLIST)
 
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
 #        globals()["skipAbove"]
@@ -868,7 +869,7 @@ def handleStartThree(name, atts):
             globals()["stack"].append(TAG_PLAYLIST_ATTRIBUTION_IDENTIFIER)
 
         else:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed.")
             globals()["stack"].append(TAG_UNKNOWN)
             # Skip body of forbidden element
 #            globals()["skipAbove"]
@@ -880,7 +881,7 @@ def handleStartThree(name, atts):
             globals()["stack"].append(TAG_PLAYLIST_TRACKLIST_TRACK)
 
         else:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed.")
             globals()["stack"].append(TAG_UNKNOWN)
             # Skip body of forbidden element
             globals()["skipAbove"] = 3
@@ -888,7 +889,7 @@ def handleStartThree(name, atts):
         globals()["firstTrack"] = False
 
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
 #        globals()["skipAbove"]
@@ -930,7 +931,7 @@ def handleStartFour(name, atts):
 
     elif name == nsXspf("extension"):
         if globals()["version"] == 0:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed in XSPF-0.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed in XSPF-0.")
         else:
             handleExtensionAttribs(atts)
         globals()["stack"].append(TAG_PLAYLIST_TRACKLIST_TRACK_EXTENSION)
@@ -986,7 +987,7 @@ def handleStartFour(name, atts):
         globals()["stack"].append(TAG_PLAYLIST_TRACKLIST_TRACK_TITLE)
 
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
         globals()["skipAbove"] = 4
@@ -1007,7 +1008,7 @@ def handleStart(name, atts):
     elif newLevel == 4:
         handleStartFour(name, atts)
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
         globals()["skipAbove"] = 4
@@ -1213,7 +1214,7 @@ def handleEntityDeclaration(entityName, is_parameter_entity, value, base, system
     lastend = 0
     try:
         while True:
-            match = iter.next()
+            match = next(iter)
             start = match.start()
             end = match.end()
             valueLen += start - lastend
@@ -1318,18 +1319,18 @@ if input != "":
         valid = False
 
 
-    print """
-											<h3>Result:</h3>"""
+    print("""
+											<h3>Result:</h3>""")
 
     if valid:
-        print """
+        print("""
 											<span class="valid">Valid</span>
 
 											<br>
 											<br>
 
 											<br>
-											
+
 											<h3>Congratulations!</h3>
 											<p style="text-align:justify">
 											<em>You care about interoperability and that shows: The content you provided is valid XSPF!</em><br>
@@ -1337,7 +1338,7 @@ if input != "":
 											To show you care and to promote XSPF, you may add this button to any page that serves
 											valid XSPF files. Here is HTML code that you can use to add the button:
 											</p>
-											
+
 											<center>
 												<!-- Two elements with horizintal space in between -->
 												<table border="0" cellpadding="0" cellspacing="10" style="margin-top:20px;margin-bottom:20px">
@@ -1357,38 +1358,38 @@ if input != "":
 												</table>
 											</center>
 
-											Well done, please come back soon!"""
+											Well done, please come back soon!""")
     else:
-        print """
-											<span class="invalid">Invalid</span>"""
-											
-											
+        print("""
+											<span class="invalid">Invalid</span>""")
 
-    print """
+
+
+    print("""
 											<br>
-											<br>"""
+											<br>""")
 
 
     stopErrorTable()
-    print "".join(errorTable)
+    print("".join(errorTable))
 
     stopSourceTable()
-    print "".join(sourceTable)
+    print("".join(sourceTable))
 
 
-    print """	
+    print("""
 										</td>
 									</tr>
-								</table>"""
+								</table>""")
 
 else:
     # Formular
-    print """	
+    print("""
 								</table>
-								</form>"""
+								</form>""")
 
 
-print """
+print("""
 							</td>
 						</tr>
 						<tr>
@@ -1413,7 +1414,7 @@ print """
 			</tr>
 		</table>
 	</body>
-</html>"""
+</html>""")
 
 
 if shellMode:

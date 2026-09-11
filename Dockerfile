@@ -2,14 +2,20 @@
 # Licensed under GNU Affero GPL v3 or later
 
 # Base image
-FROM debian:bullseye-slim
+FROM debian:trixie-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Start off with the most updated image possible
 RUN apt-get update && apt-get --yes dist-upgrade
 
 # Install dependencies
 RUN apt-get update && apt-get install --no-install-recommends --yes -V \
-        lighttpd python2.7 ca-certificates
+        ca-certificates \
+        lighttpd \
+        media-types \
+        python3 \
+        python3-legacy-cgi
 
 # Install app
 COPY check.py xspflogo-1.5.gif  /var/www/html/
