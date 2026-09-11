@@ -145,14 +145,14 @@
 
 import cgi
 ############## import cgitb; cgitb.enable()
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import sys
 import xml.parsers.expat
 import re
-from urlparse import urlparse
+from urllib.parse import urlparse
 
-print "Content-Type: text/html"     # HTML is following
-print                               # blank line, end of headers
+print("Content-Type: text/html")     # HTML is following
+print()                              # blank line, end of headers
 
 
 # Get the basename of this script
@@ -172,7 +172,7 @@ class MaliciousXmlException(Exception):
     pass
 
 
-print """
+print("""
 <html lang="en" dir="ltr">
 	<head>
 		<title>XSPF Validator &mdash; Validate your playlists</title>
@@ -190,7 +190,7 @@ print """
 				color:rgb(130,130,130);
 				text-decoration:none;
 			}
-			
+
 			td.vert {
 				background-color:rgb(180,180,180);
 				font-size:1pt;
@@ -271,7 +271,7 @@ print """
 				padding-left:4px;
 				padding-right:8px;
 			}
-			
+
 			a.blackLink {
 				color:#000000;
 				text-decoration:none;
@@ -287,7 +287,7 @@ print """
 		<table height="100%" style="width:100%">
 			<tr>
 				<td align="center" valign="middle" style="padding:10px">
-					<!-- BORDER -->"""
+					<!-- BORDER -->""")
 
 
 valid = False
@@ -312,12 +312,12 @@ if (len(sys.argv) == 3) and (sys.argv[1] == "--shell"):
 
 else:
     form = cgi.FieldStorage()
-    if form.has_key("pasted") and form.has_key("submitPasted"):
+    if "pasted" in form and "submitPasted" in form:
         input = form.getlist("pasted")[0]
         if input != "":
             intro = "Validating pasted text<br><br>"
 
-    elif form.has_key("uploaded") and form.has_key("submitUploaded"):
+    elif "uploaded" in form and "submitUploaded" in form:
         uploaded = form["uploaded"]
         if uploaded.file:
             try:
@@ -330,19 +330,19 @@ else:
         if input != "":
             intro = "Validating uploaded file<br><b><i>" + cgi.escape(uploaded.filename) + "</i></b><br><br>"
 
-    elif form.has_key("url"): ### and form.has_key("submitUrl")
+    elif "url" in form: ### and form.has_key("submitUrl")
         url = form.getlist("url")[0]
 
         if not isSafeDownloadTarget(url):
             intro = """<b style="color:red;">Download location not considered safe.<br>Please do <em>not</em> attack this site. Thanks.</b><br><br>"""
         else:
             try:
-                file = urllib2.urlopen(url)
+                file = urllib.request.urlopen(url)
                 try:
                     input = file.read()
                 finally:
                     file.close()
-                
+
             except ValueError:
                 intro = """<b style="color:red;">Invalid URL.</b><br><br>"""
 
@@ -368,50 +368,50 @@ if input != "":
 
 if input == "":
     # Formular 600
-    print """
-					<table cellpadding="0" cellspacing="0" width="600" style="border:1px solid rgb(180,180,180); background-color:#FFF;">"""
+    print("""
+					<table cellpadding="0" cellspacing="0" width="600" style="border:1px solid rgb(180,180,180); background-color:#FFF;">""")
 else:
     # Results 800
-    print """
-					<table cellpadding="0" cellspacing="0" width="750" style="border:1px solid rgb(180,180,180); background-color:#FFF;">"""
+    print("""
+					<table cellpadding="0" cellspacing="0" width="750" style="border:1px solid rgb(180,180,180); background-color:#FFF;">""")
 
-print """
-						<tr>"""
+print("""
+						<tr>""")
 
 
 if input == "":
     # Formular centered
-    print """
+    print("""
 							<td align="center" style="padding-top:60px; padding-bottom:60px">
 								<form action="" accept-charset="UTF-8" enctype="multipart/form-data" method="post">
 								<!-- CONTENT -->
-								<table>"""
+								<table>""")
 
 else:
     # Results full width
-    print """
+    print("""
 							<td style="padding-top:60px; padding-bottom:50px;">
 								<!-- CONTENT -->
-								<table style="width:100%;">"""
+								<table style="width:100%;">""")
 
 
-print """
+print("""
 									<tr>
 										<td style="padding-bottom: 20px;" align="center"><img src="xspflogo-1.5.gif" style="width:297px; height:83px; border:0;" alt=""></td>
-									</tr>"""
+									</tr>""")
 
 
 if input == "":
     if intro != "":
-        print """
+        print("""
 									<tr>
-										<td style="width:100%;" align="center">"""
-        print intro
-        print """
-									</tr>"""
+										<td style="width:100%;" align="center">""")
+        print(intro)
+        print("""
+									</tr>""")
 
     # Formular
-    print """
+    print("""
 									<tr>
 										<td style="padding-bottom:16px;">
 											Validate a Spiff playlist from ...
@@ -449,13 +449,13 @@ if input == "":
 										<td>
 											<input name="submitPasted" value="Submit" type="submit">
 										</td>
-									</tr>"""
+									</tr>""")
 
 else:
-    print """
+    print("""
 									<tr>
-										<td style="padding-left:60px; padding-right:60px">"""
-    print intro
+										<td style="padding-left:60px; padding-right:60px">""")
+    print(intro)
 
     stack = []
     valid = True
@@ -654,11 +654,11 @@ def checkXmlBase(xmlBase):
 
 def handlePlaylistAttribs(atts):
     versionFound = False
-    keys = atts.keys()
+    keys = list(atts.keys())
     for i in range(len(atts)):
         name = keys[i]
         if name == "version":
-            dummyVersion = atts.values()[i]
+            dummyVersion = list(atts.values())[i]
             if dummyVersion == "0":
                 globals()["version"] = 0
             elif dummyVersion == "1":
@@ -668,7 +668,7 @@ def handlePlaylistAttribs(atts):
                 globals()["version"] = 1
             versionFound = True
         elif name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
@@ -680,11 +680,11 @@ def handlePlaylistAttribs(atts):
 
 
 def handleNoAttribsExceptXmlBase(atts):
-    keys = atts.keys()
+    keys = list(atts.keys())
     for i in range(len(atts)):
         name = keys[i]
         if name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
@@ -696,13 +696,13 @@ def handleExtensionAttribs(atts):
     size = len(atts)
     applicationFound = False
     for i in range(size):
-        name = atts.keys()[i]
+        name = list(atts.keys())[i]
         if name == "application":
-            if not isUri(atts.values()[i]):
+            if not isUri(list(atts.values())[i]):
                 fail("Attribute <i>application</i> is not a URI.")
             applicationFound = True
         elif name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
@@ -716,13 +716,13 @@ def handleMetaLinkAttribs(atts):
     size = len(atts)
     relFound = False
     for i in range(size):
-        name = atts.keys()[i]
+        name = list(atts.keys())[i]
         if name == "rel":
-            if not isUri(atts.values()[i]):
+            if not isUri(list(atts.values())[i]):
                 fail("Attribute <i>rel</i> is not a URI.")
             relFound = True
         elif name == nsXml("base"):
-            xmlBase = atts.values()[i]
+            xmlBase = list(atts.values())[i]
             checkXmlBase(xmlBase)
         elif name == nsXml("id"):
             pass
@@ -1213,7 +1213,7 @@ def handleEntityDeclaration(entityName, is_parameter_entity, value, base, system
     lastend = 0
     try:
         while True:
-            match = iter.next()
+            match = next(iter)
             start = match.start()
             end = match.end()
             valueLen += start - lastend
@@ -1318,18 +1318,18 @@ if input != "":
         valid = False
 
 
-    print """
-											<h3>Result:</h3>"""
+    print("""
+											<h3>Result:</h3>""")
 
     if valid:
-        print """
+        print("""
 											<span class="valid">Valid</span>
 
 											<br>
 											<br>
 
 											<br>
-											
+
 											<h3>Congratulations!</h3>
 											<p style="text-align:justify">
 											<em>You care about interoperability and that shows: The content you provided is valid XSPF!</em><br>
@@ -1337,7 +1337,7 @@ if input != "":
 											To show you care and to promote XSPF, you may add this button to any page that serves
 											valid XSPF files. Here is HTML code that you can use to add the button:
 											</p>
-											
+
 											<center>
 												<!-- Two elements with horizintal space in between -->
 												<table border="0" cellpadding="0" cellspacing="10" style="margin-top:20px;margin-bottom:20px">
@@ -1357,38 +1357,38 @@ if input != "":
 												</table>
 											</center>
 
-											Well done, please come back soon!"""
+											Well done, please come back soon!""")
     else:
-        print """
-											<span class="invalid">Invalid</span>"""
-											
-											
+        print("""
+											<span class="invalid">Invalid</span>""")
 
-    print """
+
+
+    print("""
 											<br>
-											<br>"""
+											<br>""")
 
 
     stopErrorTable()
-    print "".join(errorTable)
+    print("".join(errorTable))
 
     stopSourceTable()
-    print "".join(sourceTable)
+    print("".join(sourceTable))
 
 
-    print """	
+    print("""
 										</td>
 									</tr>
-								</table>"""
+								</table>""")
 
 else:
     # Formular
-    print """	
+    print("""
 								</table>
-								</form>"""
+								</form>""")
 
 
-print """
+print("""
 							</td>
 						</tr>
 						<tr>
@@ -1413,7 +1413,7 @@ print """
 			</tr>
 		</table>
 	</body>
-</html>"""
+</html>""")
 
 
 if shellMode:
