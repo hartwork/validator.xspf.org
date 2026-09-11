@@ -144,6 +144,7 @@
 # ------------------------------------------------------------------------------
 
 import cgi
+import html
 ############## import cgitb; cgitb.enable()
 import urllib.request, urllib.error, urllib.parse
 import sys
@@ -321,14 +322,14 @@ else:
         uploaded = form["uploaded"]
         if uploaded.file:
             try:
-                input = uploaded.file.read()
+                input = uploaded.file.read().decode('UTF-8')
             except IOError:
                 pass
             finally:
                 uploaded.file.close()
 
         if input != "":
-            intro = "Validating uploaded file<br><b><i>" + cgi.escape(uploaded.filename) + "</i></b><br><br>"
+            intro = "Validating uploaded file<br><b><i>" + html.escape(uploaded.filename) + "</i></b><br><br>"
 
     elif "url" in form: ### and form.has_key("submitUrl")
         url = form.getlist("url")[0]
@@ -339,7 +340,7 @@ else:
             try:
                 file = urllib.request.urlopen(url)
                 try:
-                    input = file.read()
+                    input = file.read().decode('UTF-8')
                 finally:
                     file.close()
 
@@ -351,8 +352,8 @@ else:
                 intro = """<b style="color:red">Could not download from URL.</b><br><br>"""
 
             if input != "":
-                intro = "Validating data from URL<br><b><i><a href=\"" + cgi.escape(url, True) \
-                        + "\" class=\"blackLink\">" + cgi.escape(url) + "</a></i></b><br><br>"
+                intro = "Validating data from URL<br><b><i><a href=\"" + html.escape(url, True) \
+                        + "\" class=\"blackLink\">" + html.escape(url) + "</a></i></b><br><br>"
 
 
 lineHeads = [0]
@@ -618,7 +619,7 @@ def addSourceLine(lineNumber, badFlag):
     line2 = line[0:MAX_CHARS_PER_LINE]
     for i in range(MAX_CHARS_PER_LINE, len(line), MAX_CHARS_PER_LINE):
         line2 += "\n" + line[i:i + MAX_CHARS_PER_LINE]
-    globals()["sourceTable"].append(cgi.escape(line2).replace("\t", "&nbsp;&nbsp;").replace(" ", "&nbsp;").replace("\n", "<br>"))
+    globals()["sourceTable"].append(html.escape(line2).replace("\t", "&nbsp;&nbsp;").replace(" ", "&nbsp;").replace("\n", "<br>"))
     if badFlag:
         globals()["sourceTable"].append("""</a>""")
     globals()["sourceTable"].append("""</td>
@@ -664,7 +665,7 @@ def handlePlaylistAttribs(atts):
             elif dummyVersion == "1":
                 globals()["version"] = 1
             else:
-                fail("Version must be <i>0</i> or <i>1</i>, not '" + cgi.escape(dummyVersion) + "'.")
+                fail("Version must be <i>0</i> or <i>1</i>, not '" + html.escape(dummyVersion) + "'.")
                 globals()["version"] = 1
             versionFound = True
         elif name == nsXml("base"):
@@ -673,7 +674,7 @@ def handlePlaylistAttribs(atts):
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(name) + "' not allowed.")
+            fail("Attribute '" + html.escape(name) + "' not allowed.")
 
     if not versionFound:
         fail("Attribute <i>version</i> missing.")
@@ -689,7 +690,7 @@ def handleNoAttribsExceptXmlBase(atts):
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(keys[i]) + "' not allowed.")
+            fail("Attribute '" + html.escape(keys[i]) + "' not allowed.")
 
 
 def handleExtensionAttribs(atts):
@@ -707,7 +708,7 @@ def handleExtensionAttribs(atts):
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(name) + "' not allowed.")
+            fail("Attribute '" + html.escape(name) + "' not allowed.")
     if not applicationFound:
         fail("Attribute <i>application</i> missing.")
 
@@ -727,15 +728,15 @@ def handleMetaLinkAttribs(atts):
         elif name == nsXml("id"):
             pass
         else:
-            fail("Attribute '" + cgi.escape(name) + "' not allowed.")
+            fail("Attribute '" + html.escape(name) + "' not allowed.")
     if not relFound:
         fail("Attribute <i>rel</i> missing.")
 
 
 def handleStartOne(name, atts):
     if name != nsXspf("playlist"):
-        # fail("Element '" + cgi.escape(name) + "' not allowed.")
-        fail("Root element must be <i>playlist</i>, not '" + cgi.escape(name) + "'.")
+        # fail("Element '" + html.escape(name) + "' not allowed.")
+        fail("Root element must be <i>playlist</i>, not '" + html.escape(name) + "'.")
     else:
         handlePlaylistAttribs(atts)
     globals()["stack"].append(TAG_PLAYLIST)
@@ -776,7 +777,7 @@ def handleStartTwo(name, atts):
 
     elif name == nsXspf("extension"):
         if globals()["version"] == 0:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed in XSPF-0.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed in XSPF-0.")
         else:
             handleExtensionAttribs(atts)
         globals()["stack"].append(TAG_PLAYLIST_EXTENSION)
@@ -849,7 +850,7 @@ def handleStartTwo(name, atts):
         globals()["stack"].append(TAG_PLAYLIST_TRACKLIST)
 
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
 #        globals()["skipAbove"]
@@ -868,7 +869,7 @@ def handleStartThree(name, atts):
             globals()["stack"].append(TAG_PLAYLIST_ATTRIBUTION_IDENTIFIER)
 
         else:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed.")
             globals()["stack"].append(TAG_UNKNOWN)
             # Skip body of forbidden element
 #            globals()["skipAbove"]
@@ -880,7 +881,7 @@ def handleStartThree(name, atts):
             globals()["stack"].append(TAG_PLAYLIST_TRACKLIST_TRACK)
 
         else:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed.")
             globals()["stack"].append(TAG_UNKNOWN)
             # Skip body of forbidden element
             globals()["skipAbove"] = 3
@@ -888,7 +889,7 @@ def handleStartThree(name, atts):
         globals()["firstTrack"] = False
 
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
 #        globals()["skipAbove"]
@@ -930,7 +931,7 @@ def handleStartFour(name, atts):
 
     elif name == nsXspf("extension"):
         if globals()["version"] == 0:
-            fail("Element <i>" + cgi.escape(name) + "</i> not allowed in XSPF-0.")
+            fail("Element <i>" + html.escape(name) + "</i> not allowed in XSPF-0.")
         else:
             handleExtensionAttribs(atts)
         globals()["stack"].append(TAG_PLAYLIST_TRACKLIST_TRACK_EXTENSION)
@@ -986,7 +987,7 @@ def handleStartFour(name, atts):
         globals()["stack"].append(TAG_PLAYLIST_TRACKLIST_TRACK_TITLE)
 
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
         globals()["skipAbove"] = 4
@@ -1007,7 +1008,7 @@ def handleStart(name, atts):
     elif newLevel == 4:
         handleStartFour(name, atts)
     else:
-        fail("Element <i>" + cgi.escape(name) + "</i> not allowed.")
+        fail("Element <i>" + html.escape(name) + "</i> not allowed.")
         globals()["stack"].append(TAG_UNKNOWN)
         # Skip body of forbidden element
         globals()["skipAbove"] = 4
